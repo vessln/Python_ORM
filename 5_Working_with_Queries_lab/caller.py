@@ -144,4 +144,16 @@ def filter_authors_by_birth_year(year1, year2):
 # print(filter_authors_by_birth_year(2000, 2010))
 
 
+def change_reviewer_name(current_name, new_name):
+    Review.objects.filter(reviewer_name=current_name).update(reviewer_name=new_name)
+    return Review.objects.all()
 
+
+# print("Change Alice Johnson to A.J.:")
+# print(change_reviewer_name("Alice Johnson", "A.J."))
+# print()
+# print("Change Bob Wilson to Bobby W.:")
+# print(change_reviewer_name("Bob Wilson", "Bobby W."))
+# print()
+# print("Change A.J. to A. Johnson:")
+# print(change_reviewer_name("A.J.", "A. Johnson"))
