@@ -1,1 +1,1 @@
-My solutions for the exercises from the Python ORM course.
+My solutions for the tasks from the Softuni's Python ORM course.
