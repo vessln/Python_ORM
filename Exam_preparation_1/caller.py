@@ -51,6 +51,48 @@ def get_top_actor():
         return ""
 
 
+# Django queries 2:
+
+def get_actors_by_movies_count():
+    top_3_actors = Actor.objects.prefetch_related("actors_movies").annotate(
+        num_movies=Count("actors_movies")).order_by("-num_movies", "full_name")[:3]
+
+    if top_3_actors:
+        result = []
+        for a in top_3_actors:
+            if a.num_movies:
+                result.append(f"{a.full_name}, participated in {a.num_movies} movies")
+        return "\n".join(result)
+    else:
+        return ""
+
+
+def get_top_rated_awarded_movie():
+    top_movie = Movie.objects.filter(is_awarded=True
+                    ).select_related("starring_actor"
+                    ).prefetch_related("actors"
+                    ).order_by("-rating", "title").first()
+
+    if top_movie:
+        starring_a = top_movie.starring_actor.full_name if top_movie.starring_actor else "N/A"
+        all_actors = ", ".join(a.full_name for a in top_movie.actors.order_by("full_name") if a.full_name)
+
+        return (f"Top rated awarded movie: {top_movie.title}, rating: {top_movie.rating:.1f}. "
+                f"Starring actor: {starring_a}. Cast: {all_actors}.")
+
+    else:
+        return ""
+
+
+def increase_rating():
+    classic_movies = Movie.objects.filter(is_classic=True, rating__lt=10.0)
+
+    if not classic_movies:
+        return "No ratings increased."
+
+    num_of_updated_movies = classic_movies.update(rating=F("rating") + 0.1)
+    return f"Rating increased for {num_of_updated_movies} movies."
+
 
 
 # Director.objects.create(full_name="Akira Kurosawa", years_of_experience=0, birth_date='1910-03-23', nationality='Unknown')
