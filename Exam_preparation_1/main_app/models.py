@@ -60,7 +60,7 @@ class Movie(MixinIsAwarded, MixinLastUpdated):
     genre = models.CharField(
         max_length=6,
         choices=GenreChoices.choices,
-        default='Other',
+        default=GenreChoices.Other,
     )
     rating = models.DecimalField(
         max_digits=3,
