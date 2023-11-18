@@ -50,6 +50,17 @@ def get_top_actor():
     else:
         return ""
 
+    # or:
+    # top_actor = Actor.objects.annotate(num_movies=Count("starring_actor_movies"),
+    #                                    avg_rating=Avg("starring_actor_movies__rating")
+    #                                     ).order_by("-num_movies", "full_name").first()
+    #
+    # if top_actor and top_actor.num_movies > 0:
+    #     movies = ", ".join(mv.title for mv in top_actor.starring_actor_movies.all())
+    #     return f"Top Actor: {top_actor.full_name}, starring in movies: {movies}, movies average rating: {top_actor.avg_rating:.1f}"
+    # else:
+    #     return ""
+
 
 # Django queries 2:
 
@@ -94,7 +105,6 @@ def increase_rating():
     return f"Rating increased for {num_of_updated_movies} movies."
 
 
-
 # Director.objects.create(full_name="Akira Kurosawa", years_of_experience=0, birth_date='1910-03-23', nationality='Unknown')
 # Director.objects.create(full_name="Francis Ford Coppola", years_of_experience=50, birth_date='1939-04-07', nationality='Unknown')
 # Director.objects.create(full_name="Martin Scorsese", years_of_experience=60, birth_date='1942-11-17', nationality='American and Italian')
@@ -111,7 +121,8 @@ def increase_rating():
 #     rating=9.2,
 #     is_classic=True,
 #     director=Director.objects.get(full_name="Francis Ford Coppola"),
-#     starring_actor=al_pacino,)
+#     starring_actor=al_pacino,
+#     )
 # movie2 = Movie.objects.create(
 #     title="Apocalypse Now",
 #     release_date="1979-08-15",
@@ -120,7 +131,8 @@ def increase_rating():
 #     rating=8.5,
 #     is_classic=True,
 #     director=Director.objects.get(full_name="Francis Ford Coppola"),
-#     starring_actor=robert_duvall,)
+#     starring_actor=robert_duvall,
+#     )
 # movie3 = Movie.objects.create(
 #     title="Taxi Driver",
 #     release_date="1976-02-08",
@@ -129,7 +141,8 @@ def increase_rating():
 #     rating=8.3,
 #     is_classic=True,
 #     director=Director.objects.get(full_name="Martin Scorsese"),
-#     starring_actor=robert_duvall,)
+#     starring_actor=robert_duvall,
+#     )
 # movie4 = Movie.objects.create(
 #     title="Joker",
 #     release_date="2019-10-04",
@@ -138,7 +151,8 @@ def increase_rating():
 #     rating=8.4,
 #     is_classic=False,
 #     director=Director.objects.get(full_name="Martin Scorsese"),
-#     starring_actor=joaquin_phoenix,)
+#     starring_actor=joaquin_phoenix,
+#     )
 #
 # movie1.actors.add(al_pacino)
 # movie2.actors.add(al_pacino)
