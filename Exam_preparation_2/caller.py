@@ -16,16 +16,18 @@ def get_profiles(search_string=None):
         return ""
 
     profiles = Profile.objects.filter(
-        Q(full_name__icontains=search_string) | Q(email__icontains=search_string) | Q(phone_number__icontains=search_string)
-            ).annotate(num_orders=Count("profile_orders")).order_by("full_name")
+        Q(full_name__icontains=search_string) |
+        Q(email__icontains=search_string) |
+        Q(phone_number__icontains=search_string)
+        ).annotate(num_orders=Count("profile_orders")).order_by("full_name")
 
     if profiles:
         result = []
         for p in profiles:
             result.append(f"Profile: {p.full_name}, email: {p.email}, phone number: {p.phone_number}, orders: {p.num_orders}")
         return "\n".join(result)
-    else:
-        return ""
+
+    return ""
 
 
 def get_loyal_profiles():
@@ -49,8 +51,9 @@ def get_last_sold_products():
 # Django queries 2:
 
 def get_top_products():
-    top_products = Product.objects.annotate(sold_times=Count("products_orders")
-                            ).filter(sold_times__gt=0).order_by("-sold_times", "name")[:5]
+    top_products = Product.objects.prefetch_related("products_orders"
+                        ).annotate(sold_times=Count("products_orders")
+                        ).filter(sold_times__gt=0).order_by("-sold_times", "name")[:5]
 
     if top_products:
         result = ["Top products:"]
@@ -75,7 +78,7 @@ def apply_discounts():
 
 def complete_order():
     first_order = Order.objects.prefetch_related("products"
-                    ).filter(is_completed=False).order_by("creation_date").first()
+                ).filter(is_completed=False).order_by("creation_date").first()
 
     if first_order:
         for product in first_order.products.all():
