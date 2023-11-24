@@ -26,6 +26,9 @@ class Director(BasePerson):
         default=0,
     )
 
+    def __str__(self):
+        return self.full_name
+
     objects = DirectorManager()
 
 class Actor(MixinIsAwarded, MixinLastUpdated, BasePerson):
