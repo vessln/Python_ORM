@@ -2,17 +2,7 @@ from django.db import models
 from django.core.validators import MinLengthValidator, MinValueValidator, MaxValueValidator
 
 from main_app.managers import DirectorManager
-
-
-class MixinIsAwarded(models.Model):
-    class Meta:
-        abstract = True
-    is_awarded = models.BooleanField(default=False)
-
-class MixinLastUpdated(models.Model):
-    class Meta:
-        abstract = True
-    last_updated = models.DateTimeField(auto_now=True)
+from main_app.mixins import MixinLastUpdated, MixinIsAwarded
 
 class BasePerson(models.Model):
     class Meta:
@@ -35,6 +25,7 @@ class Director(BasePerson):
         validators=[MinValueValidator(0)],
         default=0,
     )
+
     objects = DirectorManager()
 
 class Actor(MixinIsAwarded, MixinLastUpdated, BasePerson):
