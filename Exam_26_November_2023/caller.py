@@ -54,28 +54,7 @@ def get_top_reviewer():
 
 # django queries 2:
 
-# def get_latest_art():
-#     last_article = Article.objects.prefetch_related("authors").annotate(
-#         num_reviews=Count("reviews_article"),
-#         avg_rating=Avg("reviews_article__rating")
-#     ).order_by("-published_on").first()
-#
-#     if last_article.exists():
-#         author_names = ", ".join(author.full_name for author in last_article.authors.all().order_by('full_name'))
-#
-#         if last_article.num_reviews <= 0:
-#             average_rating = 0
-#         else:
-#             average_rating = f"{last_article.avg_rating:.2f}"
-#
-#         return (f"The latest article is: {last_article.title}. "
-#                 f"Authors: {author_names}. "
-#                 f"Reviewed: {last_article.num_reviews} times. "
-#                 f"Average Rating: {average_rating}.")
-#     else:
-#         return ""
-
-def get_latest_article(): # 2
+def get_latest_article():
     latest_article = Article.objects.prefetch_related("authors").annotate(
         num_reviews=Count("reviews_article"),
         avg_rating=Avg("reviews_article__rating")
