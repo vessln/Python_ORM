@@ -95,19 +95,17 @@ def get_latest_article(): # 2
 
 
 def get_top_rated_article():
-    top_article = Article.objects.prefetch_related("reviews_article"
-            ).annotate(avg_ratings=Avg("reviews_article__rating"),
-                       num_reviews=Count('reviews_article')
-            ).filter(num_reviews__gt=0
-            ).order_by("-avg_ratings", "title").first()
+    best_article = Article.objects.prefetch_related("reviews_article").annotate(
+        num_reviews=Count("reviews_article"),
+        avg_ratings=Avg("reviews_article__rating")
+        ).filter(num_reviews__gt=0).order_by("-avg_ratings", "title").first()
 
-    if top_article:
-        return (f"The top-rated article is: {top_article.title}, "
-                f"with an average rating of {top_article.avg_ratings:.2f}, "
-                f"reviewed {top_article.num_reviews} times.")
+    if best_article:
+        return (f"The top-rated article is: {best_article.title}, "
+                f"with an average rating of {best_article.avg_ratings:.2f}, "
+                f"reviewed {best_article.num_reviews} times.")
 
-    else:
-        return ""
+    return ""
 
 
 def ban_author(email=None):
