@@ -110,16 +110,15 @@ def get_top_rated_article():
 
 def ban_author(email=None):
     if email is not None:
-        author_ban = Author.objects.prefetch_related("reviews_author"
-                                    ).filter(email__exact=email).first()
 
-        if author_ban:
-            num_reviews = author_ban.reviews_author.count()
-            author_ban.is_banned = True
-            author_ban.save()
-            author_ban.reviews_author.all().delete()
+        author_to_ban = Author.objects.filter(email__exact=email
+                    ).annotate(num_reviews=Count("reviews_author")).first()
 
-            return f"Author: {author_ban.full_name} is banned! {num_reviews} reviews deleted."
+        if author_to_ban:
+            author_to_ban.is_banned = True
+            author_to_ban.save()
+            author_to_ban.reviews_author.all().delete()
+            return f"Author: {author_to_ban.full_name} is banned! {author_to_ban.num_reviews} reviews deleted."
 
     return "No authors banned."
 
