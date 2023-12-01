@@ -7,9 +7,9 @@ def session_decorator(session):
 
                 return result
 
-            except Exception as e:
+            except Exception as ex:
                 session.rollback()
-                raise e
+                raise ex
 
             finally:
                 session.close()
@@ -18,3 +18,5 @@ def session_decorator(session):
 
     return decorator
 
+
+# The decorator manages the opening and closing of the current session, so i don't have to do it repeatedly.
