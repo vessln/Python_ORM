@@ -47,7 +47,6 @@ def update_recipe_by_name(name, new_name,  new_ingredients, new_instructions):
 #     new_instructions="Cook the pasta, mix with eggs, guanciale, and cheese"
 # ))
 # updated_recipe = session.query(Recipe).filter(Recipe.name == "Carbonara Pasta").first()
-#
 # print("Updated Recipe Details:")
 # print(f"Name: {updated_recipe.name}")
 # print(f"Ingredients: {updated_recipe.ingredients}")
@@ -70,10 +69,9 @@ def delete_recipe_by_name(name):
 
 @session_decorator(session)
 def get_recipes_by_ingredient(ingredient_name):
-    searched_recipes = [el.name for el in (
-        session.query(Recipe).filter(
-            Recipe.ingredients.ilike(f"%{ingredient_name}%")).all()
-    )]
+    searched_recipes = [el.name for el in (session.query(Recipe).filter(
+                                            Recipe.ingredients.ilike(f"%{ingredient_name}%")).all())
+                        ]
 
     return "\n".join(searched_recipes)
 
@@ -105,6 +103,63 @@ def swap_recipe_ingredients_by_name(first_recipe_name, second_recipe_name):
 # print(f"Waffles ingredients {recipe2.ingredients}")
 
 
+@session_decorator(session)
+def relate_recipe_with_chef_by_name(recipe_name, chef_name):
+    recipe = session.query(Recipe).filter_by(name=recipe_name).first()
 
+    if recipe and recipe.chef:
+        raise Exception(f"Recipe: {recipe_name} already has a related chef")
+
+    chef = session.query(Chef).filter_by(name=chef_name).first()
+
+    recipe.chef = chef
+
+    return f"Related recipe {recipe_name} with chef {chef_name}"
+
+# musaka_recipe = Recipe(name="Musaka", ingredients="Potatoes, Ground Meat, Onions, Eggs, Milk, Cheese, Spices",
+#     instructions="Layer potatoes and meat mixture, pour egg and milk mixture on top, bake until golden brown.")
+#
+# bulgarian_chef1 = Chef(name="Ivan Zvezdev")
+# bulgarian_chef2 = Chef(name="Uti Buchvarov")
+#
+# session.add(musaka_recipe)
+# session.add(bulgarian_chef1)
+# session.add(bulgarian_chef2)
+# session.commit()
+#
+# print(relate_recipe_with_chef_by_name("Musaka", "Ivan Zvezdev"))
+# print(relate_recipe_with_chef_by_name("Musaka", "Chef Uti"))
+
+
+@session_decorator(session)
+def get_recipes_with_chef():
+    recipes_with_related_chefs = (
+        session.query(Recipe.name, Chef.name.label("name_of_chef"))  # SELECT Chef.name as "name_of_chef" (alias)
+        .join(Chef, Recipe.chef).all()
+                                  )
+
+    result = []
+    for r_name, name_of_chef in recipes_with_related_chefs:
+        result.append(f"Recipe: {r_name} made by chef: {name_of_chef}")
+
+    return "\n".join(result)
+
+# chef1 = Chef(name="Gordon Ramsay")
+# chef2 = Chef(name="Julia Child")
+# chef3 = Chef(name="Jamie Oliver")
+# chef4 = Chef(name="Nigella Lawson")
+# recipe1 = Recipe(name="Beef Wellington", ingredients="Beef fillet, Puff pastry, Mushrooms, Foie gras", instructions="Prepare the fillet and encase it in puff pastry.")
+# recipe1.chef = chef1
+# recipe2 = Recipe(name="Boeuf Bourguignon", ingredients="Beef, Red wine, Onions, Carrots", instructions="Slow-cook the beef with red wine and vegetables.")
+# recipe2.chef = chef2
+# recipe3 = Recipe(name="Spaghetti Carbonara", ingredients="Spaghetti, Eggs, Pancetta, Cheese", instructions="Cook pasta, mix ingredients.")
+# recipe3.chef = chef3
+# recipe4 = Recipe(name="Chocolate Cake", ingredients="Chocolate, Flour, Sugar, Eggs", instructions="Bake a delicious chocolate cake.")
+# recipe4.chef = chef4
+# recipe5 = Recipe(name="Chicken Tikka Masala", ingredients="Chicken, Yogurt, Tomatoes, Spices", instructions="Marinate chicken and cook in a creamy tomato sauce.")
+# recipe5.chef = chef3
+# session.add_all([chef1, chef2, chef3, chef4, recipe1, recipe2, recipe3, recipe4, recipe5])
+# session.commit()
+# print(get_recipes_with_chef())
 
 
